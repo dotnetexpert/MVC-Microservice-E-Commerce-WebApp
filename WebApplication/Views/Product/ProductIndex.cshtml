@@ -1,0 +1,71 @@
+﻿@using System.Globalization
+@model IEnumerable<ProductDto>
+<br />
+<br />
+<div id="scrollable-container" class="container" style="overflow-y: auto !important;
+    max-height: 700px !important;">
+    <div class="col-12 text-end pt-3">
+        <a asp-action="ProductCreate" class="btn btn-primary"><i class="bi bi-plus-square"></i> Create New Product</a>
+    </div>
+    <div class="card shadow border-0 mt-4">
+        <div class="card-header bg-dark bg-gradient ml-0 py-3">
+            <div class="row">
+                <div class="col-12  text-center">
+                    <h1 class="text-white">Products List</h1>
+                </div>
+            </div>
+        </div>
+        <div class="card-body bg-dark p-4">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="p-0 my-3 border rounded">
+                            <div class="card">
+                                <img src="@item.ImageUrl" class="card-img-top" alt="Product Image">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-white">@item.Name</h5>
+                                <p class="card-text text-white">Category: @item.CategoryName</p>
+                                <p class="card-text text-white">Price: @(item.Price.ToString("c", CultureInfo.GetCultureInfo("hi-IN")))</p>
+                                <p class="card-text text-white">Count: @item.Count</p>
+                                <div class="btn-group " role="group" aria-label="Product Actions">
+                                    <a class="btn btn-success" href="@Url.Action("ProductEdit", new { productId = item.ProductId })">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <br />
+                                    <a class="btn btn-danger" href="@Url.Action("ProductDelete", new { productId = item.ProductId })">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .card-img-top {
+        object-fit: cover;
+        width: auto;
+        height: 220px;
+    }
+    /* Perfect Scrollbar styles */
+    #scrollable-container::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    #scrollable-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    #scrollable-container::-webkit-scrollbar-thumb {
+        background: ##36454F;
+    }
+
+        #scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: ##36454F;
+        }
+</style>

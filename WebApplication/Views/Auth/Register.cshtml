@@ -1,0 +1,68 @@
+﻿@model RegisterationRequestDto
+<form method="post">
+    <br />
+    <div class="container border p-3">
+        <div class="row text-center p-3">
+            <h1 class ="text-white">Register</h1>
+        </div>
+        <div class="col-12 col-md-6 offset-md-3 pb-2">
+            <label class="text-white" for="email">Email</label>
+            <input type="email" onkeyup="checkEmailAvailability(this.value)" asp-for="Email" id="email" class="form-control" placeholder="Email..." />
+            <span asp-validation-for="Email" class="text-danger"></span>
+            <span class="text-danger" id="errormessage"></span>
+        </div>
+        <div id="emailAvailabilityMessage" class="col-12 col-md-6 offset-md-3 pb-2"></div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="Name">Name</label>
+            <input type="text" asp-for="Name" maxlength="50" autocomplete="off" id="name" class="form-control" placeholder="Name..." />
+            <span asp-validation-for="Name" class="text-danger"></span>
+                <span id="name-validation" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="phone">Phone Number</label>
+                <input  autocomplete="off" id="phone" asp-for="PhoneNumber" class="form-control" placeholder="(555) 555-5555" />
+                <span id="phone-validation" class="text-danger"></span>
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="datepicker">Date</label>
+                <input asp-for="Date"  class="form-control" autocomplete="off" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" id="datepicker" placeholder="Select a date">
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="country">Country</label>
+                <select asp-for="Counrty" id="country" class="form-control"></select>
+                <span asp-validation-for="Counrty" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="state">State</label>
+                <select asp-for=Counrty asp-for="State" name="state" id="state" class="form-control"></select>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="Address">Address</label>
+                <input maxlength="100" autocomplete="new-address" type="text" asp-for="Address" class="form-control" placeholder="Address..." />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white" for="Password">Password</label>
+                <input maxlength="9" autocomplete="current-password" type="password" asp-for="Password" id="passwordInput" class="form-control" placeholder="Password..." onkeyup="checkPasswordStrength(this.value, 'password-strength-meter')" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <div id="password-strength-meter"></div>
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <label class="text-white">IsActive</label>
+                <input type="checkbox" asp-for="IsActive" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <button type="submit" class="form-control btn btn-success" value="Submit">Register</button>
+            </div>
+        </div>
+
+</form>
+<link href="~/css/register.css" rel="stylesheet" />
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />   
+
+}

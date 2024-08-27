@@ -1,0 +1,78 @@
+﻿@using Newtonsoft.Json
+@using WebApplicationUI.Utility
+@model ResponseDto
+<div class="container">
+    <div class="text-center">
+        @if (Model != null && Model.IsSuccess)
+        {
+            OrderHeaderDto orderHeader = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(Model.Result));
+            if (orderHeader != null && orderHeader.Status == SD.Status_Approved)
+            {
+                <h1 class="text-info">Congratulations!</h1>
+                <p>We have received your order!</p>
+                <div class="order-details">
+                    <h4 class="text-warning">Order ID: @orderHeader.OrderHeaderId</h4>
+                    <h4 class="text-warning">Name: @orderHeader.Name</h4>
+                    <h4 class="text-warning">Order Time: @orderHeader.OrderTime</h4>
+                    <h4 class="text-warning">Order Status: @orderHeader.Status</h4>
+                    <h4 class="text-warning">Order Total: @orderHeader.OrderTotal</h4>
+                </div>
+                <img src="/images/Thankyou.jpg" alt="Thank you" class="thankyou-image" />
+            }
+            else
+            {
+                <p>Failed to retrieve order information.</p>
+            }
+        }
+        else
+        {
+            <p>Failed to validate order session.</p>
+        }
+    </div>
+    <div class="col-12 text-end">
+        <a asp-action="Index" asp-controller="Home" class="btn btn-outline-warning mt-2 btn-sm">Continue Shopping</a>
+    </div>
+</div>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-info {
+        color: #17a2b8;
+    }
+
+    .text-warning {
+        color: #ffc107;
+    }
+
+    .order-details {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .thankyou-image {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+    }
+</style>

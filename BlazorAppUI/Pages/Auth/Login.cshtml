@@ -1,0 +1,25 @@
+﻿@* @page "/login"
+@model BlazorAppUI.Pages.Auth.LoginModel
+<EditForm Model="@user">
+    <div class="container border p-4">
+        <div class="row text-center">
+            <h1>Login</h1>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.UserName" class="form-control" placeholder="Username..." />
+                <ValidationMessage For="@(() => user.UserName)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.Password" type="password" class="form-control" placeholder="Password..." />
+                <ValidationMessage For="@(() => user.Password)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <button type="submit" class="form-control btn btn-success" @onclick="HandleSubmit">Login</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@{
+}
+ *@

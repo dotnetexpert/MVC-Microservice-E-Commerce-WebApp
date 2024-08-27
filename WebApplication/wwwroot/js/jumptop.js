@@ -1,0 +1,1 @@
+﻿$(document).ready(function () { var o = $("#button"); $(window).scroll(function () { $(this).scrollTop() > 300 ? o.addClass("show") : o.removeClass("show") }), o.on("click", function (o) { o.preventDefault(), $("html, body").animate({ scrollTop: 0 }, "300") }) });

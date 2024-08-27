@@ -1,0 +1,77 @@
+﻿@model ProductDto
+<form asp-action="ProductCreate" enctype="multipart/form-data">
+    <br />
+    <br />
+    <br />
+
+    <div class="container border p-5">
+        <h1 class="text-white text-center">Create Product</h1>
+
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <label class="control-label pt-2 text-white" style="font-size:20px;"> Name</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2 text-white" style="font-size:20px;">Category Name</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="CategoryName" class="form-control" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+
+            <div class="col-2">
+                <label class="control-label pt-2 text-white" style="font-size:20px;">Description</label>
+            </div>
+            <div class="col-10 pb-3">
+                <textarea asp-for="Description" id="editor" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2 text-white" style="font-size:20px;">Price</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input type="number" asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2 text-white" style="font-size:20px;">Count</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Count" class="form-control" />
+                <span asp-validation-for="Count" class="text-danger"></span>
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2 text-white" style="font-size:20px;">Image</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Image" type="file" id="imageInput" onchange="previewImage(event)" />
+                <input asp-for="Image" type="hidden" id="imageUrl" name="ImageUrl" class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <div class="col-10 pb-3">
+                <img id="imagePreview" src="#" alt="Preview Image" style="display: none; max-width: 100%; max-height: 200px;" />
+            </div>
+
+            <div class="col-5 offset-2">
+
+                <a asp-action="ProductIndex" class="btn-primary btn form-control ">Back to List</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Create" class="btn btn-success form-control" />
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</form>
+<script src="~/js/ckeditor.js"></script>
+<script src="~/js/imagepreview.js"></script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,139 @@
+﻿@* @using System.Globalization
+@model IEnumerable<ProductDto>
+
+<div class="container" style="overflow-y: auto; max-height: 300px;">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@product.ImageUrl" style="object-fit: cover; width: auto;height: 220px;" class="card-img-top" alt="@product.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">
+                            <span class="text-danger" style="font-size: 20px;">@product.Price.ToString("c", CultureInfo.GetCultureInfo("hi-IN"))</span>
+                            <span class="badge bg-warning text-white">@product.CategoryName</span>
+                        </p>
+                        @if (product.Count == 0)
+                        {
+                            <p class="text-danger">Not Available</p>
+                        }
+                        else
+                        {
+                            <p class="text-success">Available: @product.Count</p>
+                        }
+
+                        <div class="button-container">
+                            <button type="button" class="btn btn-outline-danger addTocartlist" data-product-id="@product.ProductId">
+                                Cart
+                            </button>
+                            <a asp-action="ProductDetails" asp-route-productId="@product.ProductId" class="btn btn-outline-danger">Details</a>
+                            <button type="button" class="btn btn-outline-danger addToWishlist" data-product-id="@product.ProductId">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+        .button-container .btn {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+    /* Adjust button styles as needed */
+    .btn {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        color: #333;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn:hover {
+            background-color: #e0e0e0;
+        }
+</style>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script>
+        $(function () {
+            $('.addToWishlist').click(function (e) {
+                e.preventDefault();
+                var productId = $(this).data('productId');
+                var url = '@Url.Action("CheckProductInWishlist", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        if (response.result) {
+                            toastr.options.closeButton = true;
+                            toastr.info('This product is already in your wishlist.');
+                        } else {
+                            addToWishlist(productId);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+            function addToWishlist(productId) {
+                var url = '@Url.Action("AddToWishlist", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        window.location.href = "/Wishlist/WishListIndex";
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.href = "/Wishlist/WishListIndex";
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+        $(function () {
+            $('.addTocartlist').click(function (e) {
+                e.preventDefault();
+
+                var productId = $(this).data('productId');
+                var url = '@Url.Action("ProductWishList", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        window.location.href = "/Cart/CartIndex";
+                        console.log(response);
+
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.href = "/Cart/CartIndex";
+                        console.error(xhr.responseText);
+
+                    }
+                });
+            });
+        });
+    </script>
+} *@

@@ -1,0 +1,76 @@
+﻿@page "/register"
+@using BlazorAppUI.Models
+@using BlazorAppUI.Service
+@using BlazorAppUI.Service.IService
+@inject NavigationManager NavigationManager
+@inject IAuthService _authService;
+@inject ITokenProvider _tokenProvider;
+<EditForm Model="@user" OnValidSubmit="@HandleSubmit">
+    <div class="container border p-4">
+        <div class="row text-center p-3">
+            <h1>Register</h1>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.Email" class="form-control" placeholder="Email..." />
+                <ValidationMessage For="@(() => user.Email)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.Name" class="form-control" placeholder="Name..." />
+                <ValidationMessage For="@(() => user.Name)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.PhoneNumber" class="form-control" placeholder="Phone Number..." />
+                <ValidationMessage For="@(() => user.PhoneNumber)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.Password" type="password" class="form-control" placeholder="Password..." />
+                <ValidationMessage For="@(() => user.Password)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputSelect  @bind-Value="user.Role" class="form-select">
+                    <option value="">--Select Role--</option>
+                    @foreach (var role in roles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => user.Role)" />
+            </div>
+
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <button type="submit" class="form-control btn btn-success">Register</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+    private RegisterationRequestDto user = new RegisterationRequestDto();
+    private List<string> roles = new List<string>() { "Admin", "User" };
+    private async Task HandleSubmit()
+    {
+        try
+        {          
+            var result = await _authService.RegisterAsync(user);
+            if (result.IsSuccess)
+            {
+                NavigationManager.NavigateTo("/"); 
+            }
+        }
+        catch (Exception ex)
+        {
+            
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+}

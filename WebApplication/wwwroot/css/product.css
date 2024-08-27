@@ -1,0 +1,45 @@
+﻿#scrollable-container {
+    overflow-y: auto !important;
+    max-height: 700px !important
+}
+
+    #scrollable-container::-webkit-scrollbar {
+        width: 10px
+    }
+
+    #scrollable-container::-webkit-scrollbar-track {
+        background: #f1f1f1
+    }
+
+    #scrollable-container::-webkit-scrollbar-thumb {
+        background: #36454f
+    }
+
+        #scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #555
+        }
+
+.button-container {
+    display: flex;
+    justify-content: space-between
+}
+
+    .button-container .btn {
+        flex: 1;
+        margin-right: 10px
+    }
+
+.btn {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .3s
+}
+
+    .btn:hover {
+        background-color: #e0e0e0
+    }

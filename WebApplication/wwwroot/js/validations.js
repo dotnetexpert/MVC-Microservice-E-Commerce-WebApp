@@ -1,0 +1,1 @@
+﻿document.getElementById("name").addEventListener("input", function (e) { var a = e.target.value.replace(/[^A-Za-z\s']/g, ""); e.target.value = a }), document.getElementById("name").addEventListener("paste", function (e) { var a = (e.clipboardData || window.clipboardData).getData("text/plain").replace(/[^A-Za-z\s']/g, ""); e.target.value = a, e.preventDefault() });

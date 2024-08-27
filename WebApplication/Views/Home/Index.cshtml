@@ -1,0 +1,151 @@
+﻿@using System.Globalization
+@model ViewModel
+<br />
+<br />
+<div class="container">
+    <!-- Welcome banner -->
+    <div class="jumbotron text-center bg-primary text-white py-4 mb-4">
+        <h1 class="display-4">Welcome to My Showroom</h1>
+        <p class="lead">Discover our exclusive range of products</p>
+    </div>
+
+    <!-- Product cards -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var product in Model.parent)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@product.ImageUrl" class="card-img-top" style="object-fit: cover; height: 220px;" alt="@product.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">
+                            <span class="text-black" style="font-size: 20px;">@product.Price.ToString("c", CultureInfo.GetCultureInfo("hi-IN"))</span>
+                            <span class="badge bg-warning text-white">@product.CategoryName</span>
+                        </p>
+                        @if (product.Count == 0)
+                        {
+                            <p class="text-danger">Not Available</p>
+                        }
+                        else
+                        {
+                            <p class="text-success">Available: @product.Count</p>
+                        }
+
+                        <div class="d-flex justify-content-between mt-3">
+                            @if (product.Count == 0)
+                            {
+                                <button disabled type="button" class="btn btn-secondary addTocartlist" data-product-id="@product.ProductId">
+                                    Cart
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-secondary addTocartlist" data-product-id="@product.ProductId">
+                                    Cart
+                                </button>
+                            }
+                            <a asp-action="ProductDetails" asp-route-productId="@product.ProductId" class="btn btn-outline-info">Details</a>
+                            <button type="button" class="btn btn-outline-danger addToWishlist" data-product-id="@product.ProductId">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<br />
+<br />
+<br />
+
+@if (User.Identity.IsAuthenticated)
+{
+    @if (Model.child == null)
+    {
+        <!-- You might want to add some content here for when there are no recommendations -->
+    }
+    else
+    {
+        <div class="container">
+            @* <h2 class="text-center mb-4">Recommended Products</h2> *@
+            <div class="main-container">
+                @await Html.PartialAsync("_RecommendedProducts", Model.child)
+            </div>
+        </div>
+    }
+}
+<link href="~/css/product.css" rel="stylesheet" />
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script>
+        $(function () {
+            $('.addToWishlist').click(function (e) {
+                e.preventDefault();
+                var productId = $(this).data('productId');
+                var url = '@Url.Action("CheckProductInWishlist", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        if (response.result) {
+                            toastr.options.closeButton = true;
+                            toastr.info('This product is already in your wishlist.');
+                        } else {
+                            addToWishlist(productId);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            function addToWishlist(productId) {
+                var url = '@Url.Action("AddToWishlist", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        window.location.href = "/Wishlist/WishListIndex";
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.href = "/Wishlist/WishListIndex";
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+        $(function () {
+            $('.addTocartlist').click(function (e) {
+                e.preventDefault();
+
+                var productId = $(this).data('productId');
+                var url = '@Url.Action("ProductWishList", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        window.location.href = "/Cart/CartIndex";
+                        console.log(response);
+
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.href = "/Cart/CartIndex";
+                        console.error(xhr.responseText);
+
+                    }
+                });
+            });
+        });
+    </script>
+
+}

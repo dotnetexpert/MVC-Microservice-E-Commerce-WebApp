@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ProductDtos>
+
+<div>
+    <h2>Recommended Products</h2>
+    <div class="container row">
+        @foreach (var recommendedProduct in Model)
+        {
+
+            <div class="col-md-3">
+                <div class="card mb-4 shadow-sm">
+                    <img src="@recommendedProduct.ImageUrl" class="card-img-top" alt="@recommendedProduct.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@recommendedProduct.Name</h5>
+                        <p class="card-text">@recommendedProduct.Description</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                @* <a asp-action="Details" asp-route-id="@recommendedProduct.ProductId" class="btn btn-sm btn-outline-secondary">View</a> *@
+                            </div>
+                            <small class="text-muted">@recommendedProduct.Price.ToString("C")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>

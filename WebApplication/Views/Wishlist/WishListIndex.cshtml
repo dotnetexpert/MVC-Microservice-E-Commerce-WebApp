@@ -1,0 +1,108 @@
+﻿@model CartDto
+@if (Model != null && Model.CartHeader != null && Model.WishListItems?.Count() > 0)
+{
+    <form method="post" asp-action="ProductWishList">
+        <input asp-for="wish.ProductId" hidden />
+        <div class="container mt-5">
+            <div class="card border">
+                <div class="card-header bg-dark text-light">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <h3 class="text-success"><i class="bi bi-heart"></i> &nbsp; Wish List</h3>
+                        </div>
+                        <div class="col-6 text-end">
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-outline-warning btn-sm">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @foreach (var cartObj in Model.WishListItems)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-3 text-center">
+                                <img src="@cartObj.Product.ImageUrl" class="rounded" width="70%" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <h5>@cartObj.Product.Name</h5>
+                                <p>@Html.Raw(cartObj.Product.Description)</p>
+                            </div>
+                            @* <div class="col-12 col-md-3">
+                    <p class="mb-1"><strong>Price:</strong> @string.Format("{0:c}", cartObj.Product.Price)</p>
+                    <div class="input-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary minus-btn" data-cart-id="@cartObj.WishListItemId">-</button>
+                    <input type="text" class="form-control count-input" value="@cartObj.Count" readonly />
+                    <button type="button" class="btn btn-sm btn-outline-secondary plus-btn" data-cart-id="@cartObj.WishListItemId">+</button>
+                    </div>
+                    </div> *@
+                            <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                                <a asp-action="RemoveFromWishlist" asp-controller="Wishlist" asp-route-wishListItemId="@cartObj.WishListItemId" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
+                            @if (cartObj.Product.Count==0)
+                            {
+                                <div class="col-2">
+                                    <button disabled class="btn btn-success addToWishlist" data-product-id="@cartObj.ProductId">
+                                        Add To Cart
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-2">
+                                    <button class="btn btn-success addToWishlist" data-product-id="@cartObj.ProductId">
+                                        Add To Cart
+                                    </button>
+                                </div>
+                            }
+                            @*  <div class="col-4">
+                    <button type="submit" class="btn btn-primary form-control btn-lg" style="height:50px;">Add to Cart</button>
+                    </div> *@
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <div class="container">    
+        <div class="alert alert-info mt-4" role="alert">
+            <p class="mb-0">Your wishlist is empty. Please add items to your wishlist.</p>
+        </div>
+    </div>
+}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="~/js/plusmin.js"></script>
+@section scripts {
+    <script>
+        $(function () {
+            $('.addToWishlist').click(function (e) {
+                e.preventDefault();
+
+                var productId = $(this).data('productId');
+                var url = '@Url.Action("ProductWishList", "Wishlist")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { productId: productId },
+                    success: function (response) {
+                        window.location.href = "/Cart/CartIndex";
+                        console.log(response);
+
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.href = "/Cart/CartIndex";
+                        console.error(xhr.responseText);
+
+                    }
+                });
+            });
+        });
+    </script>
+}

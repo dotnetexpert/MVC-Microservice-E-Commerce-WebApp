@@ -1,0 +1,81 @@
+﻿@page "/login"
+@using BlazorAppUI.Models
+@using BlazorAppUI.Service
+@using BlazorAppUI.Service.IService
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Newtonsoft.Json
+@inject IAuthService AuthService
+@inject ITokenProvider TokenProvider
+@inject NavigationManager NavigationManager
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.AspNetCore.Authentication
+@inject AppManager _AppManager
+<EditForm Model="@user">
+    <div class="container border p-4">
+        <div class="row text-center">
+            <h1>Login</h1>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.UserName" class="form-control" placeholder="Username..." />
+                <ValidationMessage For="@(() => user.UserName)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <InputText @bind-Value="user.Password" type="password" class="form-control" placeholder="Password..." />
+                <ValidationMessage For="@(() => user.Password)" />
+            </div>
+            <div class="col-12 col-md-6 offset-md-3 pb-2">
+                <button type="submit" class="form-control btn btn-success" @onclick="HandleSubmit">Login</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+    private LoginRequestDto user = new LoginRequestDto();
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            ResponseDto responseDto = await AuthService.LoginAsync(user);
+            if (responseDto != null && responseDto.IsSuccess)
+            {
+                LoginResponseDto loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Result));
+               await  _AppManager.SignInUser(loginResponseDto);
+                 // TokenProvider.SetToken(loginResponseDto.Token);
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                Console.WriteLine("Login failed. Please check your credentials.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred during login: {ex.Message}");
+        }
+    }
+    // private async Task SignInUser(LoginResponseDto model)
+    // {
+    //     var handler = new JwtSecurityTokenHandler();
+    //     var jwt = handler.ReadJwtToken(model.Token);
+    //     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+    //     identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email,
+    //         jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
+    //     identity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub,
+    //         jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Sub).Value));
+    //     identity.AddClaim(new Claim(JwtRegisteredClaimNames.Name,
+    //         jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Name).Value));
+    //     identity.AddClaim(new Claim(ClaimTypes.Name,
+    //         jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
+    //     identity.AddClaim(new Claim(ClaimTypes.Role,
+    //         jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
+    //     var principal = new ClaimsPrincipal(identity);        
+    //     await HttpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+    // }
+
+
+}

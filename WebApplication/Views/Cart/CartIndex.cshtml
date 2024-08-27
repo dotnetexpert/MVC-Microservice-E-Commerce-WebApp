@@ -1,0 +1,166 @@
+﻿@model CartDto
+@if (Model.CartHeader != null && Model.CartDetails?.Count() > 0)
+{
+    <form method="post" asp-action="EmailCart">
+        <span hidden id="cartCount"></span>
+        <br />
+        <input asp-for="CartHeader.UserId" hidden />
+        <input asp-for="CartHeader.CartHeaderId" hidden />
+        <div class="">
+            <div class="card border mt-1 container">
+                <div class="card-header bg-dark text-light  row ">
+                    <div class="col-6">
+                        <h3 class="text-success"><i class="bi bi-cart"></i> &nbsp; Shopping Cart</h3>
+                    </div>
+                    <div class="col-6 text-end">
+                        <a asp-action="Index" asp-controller="Home" class="btn btn-outline-warning mt-2 btn-sm">Continue Shopping</a>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class=" d-none d-lg-block">
+                        <div class="row text-info">
+                            <div class="col-lg-2">
+                                Product Image
+                            </div>
+                            <div class="col-lg-4">
+                                Product Details
+                            </div>
+                            <div class="col-lg-1">
+                                Available
+                            </div>
+                            <div class="col-lg-2">
+                                Price
+                            </div>
+                            <div class="col-lg-2">
+                                Count
+                            </div>
+                            <div class="col-lg-1">
+                                Action
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    @foreach (var cartObj in Model.CartDetails)
+                    {
+                        @if (cartObj.Product.Count == 0)
+                        {
+                            <div class="row h-100">
+                                <div class="col-4 col-md-2 text-center py-2">
+                                    <img src="@cartObj.Product.ImageUrl" class="rounded" width="100%" />
+                                </div>
+                                <div class="col-7 col-md-4">
+                                    <h5>@cartObj.Product.Name</h5>
+                                    <div style="font-size:11px;">@Html.Raw(cartObj.Product.Description)</div>
+                                </div>
+                                <div class="col-lg-1 col-md-1 col-2">
+                                    <span style="font-size:17px;">@cartObj.Product.Count</span>
+                                </div>
+                                <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                                    <a asp-action="Remove" asp-route-cartDetailsId="@cartObj.CartDetailsId" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div id="cartDetailsContainer_@cartObj.CartDetailsId">
+                                <div class="row h-100">
+                                    <div class="col-4 col-md-2 text-center py-2">
+                                        <img src="@cartObj.Product.ImageUrl" class="rounded" width="100%" />
+                                    </div>
+                                    <div class="col-7 col-md-4">
+                                        <h5>@cartObj.Product.Name</h5>
+                                        <div style="font-size:11px;">@Html.Raw(cartObj.Product.Description)</div>
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-2">
+                                        <span style="font-size:17px;">@cartObj.Product.Count</span>
+                                    </div>
+                                    <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
+                                        <span id="price-span-@cartObj.CartDetailsId" style="font-size:17px;">@string.Format("{0:c}", cartObj.Product.Price * cartObj.Count)</span>
+                                    </div>
+
+                                    <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
+                                        <div class="input-group">
+                                            <button min="1" max="@cartObj.Count" id="minus-btn-@cartObj.CartDetailsId" type="button" class="btn btn-sm btn-outline-secondary minus-btn" data-cart-id="@cartObj.CartDetailsId">-</button>
+                                            <input id="count-input-@cartObj.CartDetailsId" onkeyup="adjustCartItemOnServer(@cartObj.Product.ProductId, @cartObj.Product.Price)" type="number" class="form-control count-input" value="@cartObj.Count" min="1" max="@cartObj.Count" />
+                                            <input id="price-input-@cartObj.CartDetailsId" type="text" hidden class="form-control count-input" value="@cartObj.Product.Price" readonly />
+                                            <button min="1" max="@cartObj.Count" id="plus-btn-@cartObj.CartDetailsId" type="button" class="btn btn-sm btn-outline-secondary plus-btn" data-cart-id="@cartObj.CartDetailsId">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                                        <a asp-action="Remove" asp-route-cartDetailsId="@cartObj.CartDetailsId" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="card-footer row">
+                    <div class="col-3 offset-9 text-end">
+                        <a asp-action="Checkout" class="btn btn-success form-control">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <div class="container">
+        <div class="alert alert-info mt-4" role="alert">
+            <p class="mb-0">Please add items to cart.</p>
+        </div>
+    </div>
+}
+@section scripts {
+    <script src="~/js/plusmin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
+    <script type="text/javascript">
+        // Create a connection to the hub.
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/cartHub")
+            .build();
+
+        // Function to update cart details.
+        function updateCartDetails(cart) {
+            const cartCountElement = document.getElementById("cartCount");
+            if (cartCountElement) {
+                cartCountElement.innerText = cart.cartDetails.length;
+            } else {
+                console.warn("Cart count element not found.");
+            }
+
+            cart.cartDetails.forEach(item => {
+                const priceSpan = document.getElementById(`price-span-${item.cartDetailsId}`);
+                const countInput = document.getElementById(`count-input-${item.cartDetailsId}`);
+
+                if (priceSpan && countInput) {
+                    priceSpan.innerText = (item.product.price * item.count).toFixed(2);
+                    countInput.value = item.count;
+                } else {
+                    console.warn(`Elements for cart item ${item.cartDetailsId} not found.`);
+                }
+            });
+        }
+
+        // Listen for cart data updates.
+        connection.on("ReceiveCartDataUpdate", function (cart) {
+            updateCartDetails(cart);
+        });
+        // Start the connection.
+        connection.start()
+            .then(() => console.log("SignalR connected."))
+            .catch(err => console.error("SignalR connection error: ", err.toString()));       
+        connection.on("RemoveCartData", (cartDetailsId) => {          
+            console.log("Cart with ID " + cartDetailsId + " removed successfully.");            
+            const itemElement = document.getElementById(`cartDetailsContainer_${cartDetailsId}`)
+            if(itemElement){
+                itemElement.remove();
+            }            
+        });            
+    </script>
+}

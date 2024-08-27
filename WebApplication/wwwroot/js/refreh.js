@@ -1,0 +1,1 @@
+﻿$.ajax({ url: "/Home/Index", type: "POST", data: {}, success: function (r) { r.success ? location.reload(!0) : console.error("Error: " + r.message) }, error: function (r, e, o) { console.error("Error: " + o) } });

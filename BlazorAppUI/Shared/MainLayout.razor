@@ -1,0 +1,93 @@
+﻿@using System.Security.Claims
+@using BlazorAppUI.Service.IService
+@using BlazorAppUI.Utility
+@using Microsoft.AspNetCore.Identity
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ITokenProvider _tokenProvider;
+@inject NavigationManager NavigationManager
+<PageTitle>BlazorAppUI</PageTitle>
+<div class="page">
+   @*  <div class="sidebar">
+        <NavMenu />
+    </div> *@
+    <main style="display: flex; flex-direction: column; height: 100vh;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark  box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MicroService</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Home
+                                <span class="visually-hidden">(current)</span>
+                            </a>
+                        </li>
+                        @{
+                            var authenticationStateTask = AuthenticationStateProvider.GetAuthenticationStateAsync();
+                            var user = authenticationStateTask.Result.User;
+                            if (user.IsInRole(SD.RoleAdmin))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Content Management
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Coupon" asp-action="CouponIndex">Coupon</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="ProductIndex">Product</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+
+                       @*  <li class="nav-item">
+                            <a class="nav-link " asp-area="" asp-controller="Order" asp-action="OrderIndex">
+                                Manage Order
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " asp-area="" asp-controller="Cart" asp-action="CartIndex">
+                                &nbsp; <i class="bi bi-cart"></i>&nbsp;
+                            </a>
+                        </li> *@
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (!user.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login" >Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/register">Register</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link " href="#">Hello @user.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " onclick="@Logout">Logout</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <article style="overflow:auto" class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+@code{
+    public async Task Logout()
+    {
+        _tokenProvider.ClearToken();
+       NavigationManager.NavigateTo("/");
+    }
+}

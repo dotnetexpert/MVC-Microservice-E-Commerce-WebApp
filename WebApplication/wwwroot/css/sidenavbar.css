@@ -1,0 +1,28 @@
+﻿#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    z-index: 1000;
+    background-color: #343a40;
+    color: #fff;
+    padding-top: 3.5rem
+}
+
+    #sidebar .nav-link {
+        padding: 10px;
+        color: #fff
+    }
+
+        #sidebar .nav-link.active {
+            background-color: #6c757d
+        }
+
+    #sidebar .badge {
+        margin-left: 5px
+    }
+
+.navbar {
+    z-index: 999
+}
